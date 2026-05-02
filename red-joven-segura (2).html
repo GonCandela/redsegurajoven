@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Red Joven Segura</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--navy:#1a2e5a;--blue:#2563b8;--teal:#0ea5a0;--teal-light:#e0f5f4;--purple:#7c3aed;--purple-light:#ede9fe;--green:#16a34a;--green-light:#dcfce7;--orange-light:#fff7ed;--bg:#f0f4ff;--white:#fff;--text:#1e293b;--muted:#64748b;--radius:18px;--shadow:0 4px 20px rgba(26,46,90,.10)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);display:flex;justify-content:center}
+.app{width:100%;max-width:430px;min-height:100vh;background:var(--white);position:relative;overflow:hidden}
+.screen{display:none;flex-direction:column;height:100vh;overflow:hidden}
+.screen.active{display:flex}
+.scrollable{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.pb100{padding-bottom:100px}
+.header{background:linear-gradient(135deg,#dbeafe 0%,#e0f2fe 50%,#d1fae5 100%);padding:28px 20px 20px;text-align:center;position:relative;flex-shrink:0}
+.header .bell{position:absolute;top:18px;right:18px;width:36px;height:36px;background:rgba(255,255,255,.7);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;border:none}
+.logo-ring{width:68px;height:68px;margin:0 auto 10px;background:linear-gradient(135deg,var(--navy),var(--blue),var(--teal));border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(37,99,184,.3)}
+.logo-ring svg{width:40px;height:40px}
+.header h1{font-size:21px;font-weight:800;color:var(--navy);letter-spacing:-.5px}
+.header p{font-size:13px;color:var(--blue);margin-top:2px}
+.badge{display:inline-block;margin-top:8px;background:var(--blue);color:#fff;font-size:11px;font-weight:600;padding:4px 14px;border-radius:20px}
+.bottom-nav{flex-shrink:0;background:#fff;border-top:1px solid #e2e8f0;display:flex;padding:8px 0 14px}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;border:none;background:none;color:var(--muted);font-size:10px;font-weight:600;transition:color .2s;padding:4px 0}
+.nav-item.active{color:var(--blue)}
+.nav-item svg{width:22px;height:22px}
+.inner-header{background:linear-gradient(135deg,#dbeafe,#e0f2fe);padding:14px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+.back-btn{width:36px;height:36px;border-radius:50%;background:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:var(--shadow);flex-shrink:0;color:var(--navy);font-weight:bold}
+.inner-header h2{font-size:17px;font-weight:800;color:var(--navy)}
+.inner-header p{font-size:12px;color:var(--muted)}
+.roles{display:flex;gap:10px;padding:16px 14px 0}
+.role-card{flex:1;background:#fff;border-radius:var(--radius);padding:14px 6px 12px;text-align:center;box-shadow:var(--shadow);cursor:pointer;border:2px solid transparent;transition:all .2s}
+.role-card:active{border-color:var(--blue);transform:translateY(-2px)}
+.role-card .avatar{font-size:30px;line-height:1;margin-bottom:8px}
+.role-card .icon-badge{width:26px;height:26px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff}
+.role-card p{font-size:11px;font-weight:700;color:var(--navy);line-height:1.3}
+.role-card.joven .icon-badge{background:var(--blue)}
+.role-card.familia .icon-badge{background:var(--teal)}
+.role-card.centro .icon-badge{background:var(--purple)}
+.needs-section{padding:16px 14px 8px}
+.needs-section h2{font-size:16px;font-weight:800;color:var(--navy);margin-bottom:12px}
+.needs-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.need-btn{background:#fff;border-radius:14px;padding:14px 10px;display:flex;align-items:center;gap:8px;box-shadow:var(--shadow);cursor:pointer;border:none;text-align:left;transition:all .2s;width:100%}
+.need-btn:active{transform:translateY(-2px)}
+.need-btn .ni{width:34px;height:34px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:17px}
+.need-btn span{font-size:12px;font-weight:700;color:var(--navy);line-height:1.3;flex:1}
+.n1 .ni{background:var(--teal-light)}.n2 .ni{background:var(--purple-light)}.n3 .ni{background:var(--green-light)}.n4 .ni{background:var(--orange-light)}
+.emergency{margin:14px;background:linear-gradient(135deg,var(--navy),var(--blue));border-radius:var(--radius);padding:18px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;text-decoration:none}
+.emergency:active{opacity:.85}
+.emergency .emo{font-size:26px}
+.emergency div{flex:1}
+.emergency p{color:rgba(255,255,255,.8);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.emergency strong{color:#fff;font-size:15px;font-weight:800;display:block;line-height:1.2}
+.info-card{margin:14px;background:#fff;border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+.info-card h3{font-size:15px;font-weight:800;color:var(--navy);margin-bottom:8px}
+.info-card p{font-size:13px;color:var(--muted);line-height:1.6}
+.info-card .tag{display:inline-block;background:var(--teal-light);color:var(--teal);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:10px}
+.contact-card{margin:14px;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.contact-card .cc-header{background:linear-gradient(135deg,var(--navy),var(--blue));padding:14px 18px}
+.contact-card .cc-header h3{color:#fff;font-size:15px;font-weight:800}
+.contact-card .cc-header p{color:rgba(255,255,255,.75);font-size:12px;margin-top:2px}
+.contact-card .cc-body{background:#fff;padding:10px 18px}
+.contact-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #f1f5f9}
+.contact-item:last-child{border-bottom:none}
+.contact-item .ci-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.ci-gc{background:#fef3c7}.ci-em{background:#fee2e2}.ci-anon{background:var(--teal-light)}
+.contact-item .ci-text{flex:1}
+.contact-item .ci-text strong{display:block;font-size:13px;font-weight:800;color:var(--navy)}
+.contact-item .ci-text span{font-size:12px;color:var(--muted)}
+.call-btn{background:var(--blue);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;transition:opacity .2s}
+.call-btn.red{background:#dc2626}
+.call-btn:active{opacity:.8}
+.explorar-header{background:linear-gradient(135deg,#dbeafe,#e0f2fe);padding:16px 14px;flex-shrink:0}
+.explorar-header h2{font-size:17px;font-weight:800;color:var(--navy)}
+.explorar-header p{font-size:12px;color:var(--muted)}
+.explorar-content{padding:14px 14px 100px}
+.explora-card{border-radius:var(--radius);overflow:hidden;margin-bottom:14px;box-shadow:var(--shadow);cursor:pointer}
+.explora-card .ec-img{height:90px;display:flex;align-items:center;justify-content:center;font-size:44px}
+.bg-blue{background:linear-gradient(135deg,#dbeafe,#bfdbfe)}.bg-green{background:linear-gradient(135deg,#dcfce7,#bbf7d0)}.bg-purple{background:linear-gradient(135deg,#ede9fe,#ddd6fe)}.bg-orange{background:linear-gradient(135deg,#ffedd5,#fed7aa)}.bg-red{background:linear-gradient(135deg,#fee2e2,#fecaca)}.bg-yellow{background:linear-gradient(135deg,#fef9c3,#fef08a)}
+.explora-card .ec-body{background:#fff;padding:14px 16px}
+.explora-card .ec-body h4{font-size:14px;font-weight:800;color:var(--navy);margin-bottom:4px}
+.explora-card .ec-body p{font-size:12px;color:var(--muted);line-height:1.4}
+.explora-inner{padding:14px 14px 100px}
+.explora-inner h3{font-size:16px;font-weight:800;color:var(--navy);margin:18px 0 10px}
+.explora-inner p{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:10px}
+.explora-inner ul{padding-left:18px;margin-bottom:12px}
+.explora-inner ul li{font-size:13px;color:var(--muted);line-height:1.8}
+.highlight-box{background:var(--teal-light);border-radius:14px;padding:14px 16px;margin:12px 0;border-left:4px solid var(--teal)}
+.highlight-box p{color:#0f766e;font-weight:600;font-size:13px;margin:0}
+.warn-box{background:#fff7ed;border-radius:14px;padding:14px 16px;margin:12px 0;border-left:4px solid #f59e0b}
+.warn-box p{color:#92400e;font-weight:600;font-size:13px;margin:0}
+.chat-container{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.chat-messages{flex:1;padding:14px;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:85%}
+.msg.bot{align-self:flex-start}.msg.user{align-self:flex-end}
+.msg .bubble{padding:11px 15px;border-radius:18px;font-size:14px;line-height:1.5}
+.msg.bot .bubble{background:#f1f5f9;color:var(--text);border-bottom-left-radius:4px}
+.msg.user .bubble{background:var(--blue);color:#fff;border-bottom-right-radius:4px}
+.msg .time{font-size:10px;color:var(--muted);margin-top:4px;padding:0 4px}
+.msg.user .time{text-align:right}
+.quick-replies{display:flex;gap:8px;flex-wrap:wrap;padding:8px 14px;flex-shrink:0}
+.qr-chip{background:var(--teal-light);color:var(--teal);border:none;border-radius:20px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
+.qr-chip:active{background:var(--teal);color:#fff}
+.chat-input-row{padding:10px 14px 18px;background:#fff;border-top:1px solid #f1f5f9;display:flex;gap:10px;align-items:flex-end;flex-shrink:0}
+.chat-input{flex:1;border:1px solid #e2e8f0;border-radius:20px;padding:10px 16px;font-size:14px;resize:none;font-family:inherit;color:var(--text);outline:none;max-height:80px}
+.chat-input:focus{border-color:var(--blue)}
+.send-btn{width:42px;height:42px;background:var(--blue);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.send-btn svg{width:18px;height:18px;fill:#fff}
+.test-container{background:#fff;border-radius:var(--radius);margin:0 14px 14px;box-shadow:var(--shadow);overflow:hidden}
+.test-header{background:linear-gradient(135deg,var(--purple),#5b21b6);padding:16px 18px}
+.test-header h3{color:#fff;font-size:15px;font-weight:800}
+.test-header p{color:rgba(255,255,255,.8);font-size:12px;margin-top:2px}
+.test-body{padding:16px 18px}
+.test-question{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:12px;line-height:1.4}
+.test-progress{height:4px;background:#e2e8f0;border-radius:4px;margin-bottom:16px;overflow:hidden}
+.test-progress-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:4px;transition:width .4s ease}
+.test-options{display:flex;flex-direction:column;gap:8px}
+.test-opt{background:#f8fafc;border:2px solid #e2e8f0;border-radius:12px;padding:12px 16px;font-size:13px;font-weight:600;color:var(--navy);cursor:pointer;text-align:left;transition:all .2s}
+.test-opt:active{border-color:var(--blue);background:var(--teal-light)}
+.test-result{padding:18px;text-align:center}
+.test-result .score{font-size:48px;font-weight:900;color:var(--blue);line-height:1}
+.test-result h4{font-size:16px;font-weight:800;color:var(--navy);margin:8px 0 6px}
+.test-result p{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:14px}
+.test-result .result-badge{display:inline-block;padding:6px 18px;border-radius:20px;font-size:12px;font-weight:700;margin-bottom:12px}
+.badge-ok{background:var(--green-light);color:var(--green)}
+.badge-warn{background:#fff7ed;color:#d97706}
+.badge-alert{background:#fee2e2;color:#dc2626}
+.restart-btn{background:var(--navy);color:#fff;border:none;border-radius:12px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-top:4px}
+.resource-list{padding:10px 14px 100px}
+.resource-item{background:#fff;border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:var(--shadow);display:flex;align-items:flex-start;gap:14px}
+.ri-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.ri-text{flex:1}
+.ri-text h4{font-size:14px;font-weight:800;color:var(--navy);margin-bottom:3px}
+.ri-text p{font-size:12px;color:var(--muted);line-height:1.4}
+.ri-text .phone{font-size:16px;font-weight:800;color:var(--blue);margin-top:6px;display:block;text-decoration:none}
+.perfil-content{padding:16px 14px 100px}
+.perfil-avatar{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--teal));margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:36px}
+.perfil-name{text-align:center;font-size:18px;font-weight:800;color:var(--navy)}
+.perfil-sub{text-align:center;font-size:13px;color:var(--muted);margin-bottom:20px}
+.qr-box{background:#fff;border-radius:20px;padding:22px;box-shadow:0 8px 40px rgba(26,46,90,.13);display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:14px}
+.qr-url{background:#f8fafc;border-radius:10px;padding:8px 14px;font-size:11px;color:var(--blue);word-break:break-all;text-align:center;font-weight:600;border:1px solid #e2e8f0;width:100%}
+.copy-btn{background:var(--navy);color:#fff;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;width:100%;transition:background .2s}
+.copy-btn.copied{background:var(--green)}
+.qr-info-box{background:var(--teal-light);border-radius:14px;padding:14px 16px;text-align:center;margin-bottom:14px}
+.qr-info-box p{font-size:12px;color:#0f766e;font-weight:600;line-height:1.5}
+.perfil-section{margin-top:6px}
+.perfil-section h3{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.perfil-item{background:#fff;border-radius:14px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);cursor:pointer}
+.perfil-item .pi-arr{color:var(--muted);font-size:16px}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;z-index:9999;white-space:nowrap}
+.toast.show{opacity:1}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.screen.active{animation:fadeUp .25s ease both}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ═══ INICIO ═══ -->
+<div class="screen active" id="s-inicio">
+  <div class="header">
+    <button class="bell" onclick="showToast('Sin notificaciones nuevas')">🔔</button>
+    <div class="logo-ring"><svg viewBox="0 0 44 44" fill="none"><circle cx="22" cy="12" r="6" fill="white" opacity=".9"/><circle cx="33" cy="28" r="5" fill="white" opacity=".7"/><circle cx="11" cy="28" r="5" fill="white" opacity=".7"/><path d="M22 18 C28 22 30 26 33 28 M22 18 C16 22 14 26 11 28 M33 28 C28 34 16 34 11 28" stroke="white" stroke-width="1.5" fill="none" opacity=".5"/></svg></div>
+    <h1>Red Joven Segura</h1>
+    <p>Prevención, apoyo y detección temprana</p>
+    <span class="badge">Dirigida a jóvenes de 11 a 24 años</span>
+  </div>
+  <div class="scrollable pb100">
+    <div class="roles">
+      <div class="role-card joven" onclick="goTo('s-joven')"><div class="avatar">🧑</div><div class="icon-badge">👤</div><p>Soy joven</p></div>
+      <div class="role-card familia" onclick="goTo('s-familia')"><div class="avatar">👨‍👩‍👦</div><div class="icon-badge">❤️</div><p>Soy familia</p></div>
+      <div class="role-card centro" onclick="goTo('s-centro')"><div class="avatar">👩‍💼</div><div class="icon-badge">🏫</div><p>Soy centro educativo / servicio social</p></div>
+    </div>
+    <div class="needs-section">
+      <h2>¿Qué necesitas?</h2>
+      <div class="needs-grid">
+        <button class="need-btn n1" onclick="goTo('s-entender')"><div class="ni">🧠</div><span>Quiero entender qué me está pasando</span></button>
+        <button class="need-btn n2" onclick="goTo('s-amigo')"><div class="ni">👥</div><span>Me preocupa un amigo/a</span></button>
+        <button class="need-btn n3" onclick="goTo('s-casa')"><div class="ni">🏠</div><span>Cómo actuar en casa</span></button>
+        <button class="need-btn n4" onclick="goTo('s-profesional')"><div class="ni">👔</div><span>Orientación para profesionales</span></button>
+      </div>
+    </div>
+    <a class="emergency" href="tel:062" onclick="return confirmarLlamada(event)">
+      <span class="emo">🫱</span>
+      <div><p>Guardia Civil · Emergencias</p><strong>Pertenecer no debe<br>ponerte en riesgo.</strong></div>
+      <span style="color:#fff;font-size:22px">📞</span>
+    </a>
+  </div>
+  <nav class="bottom-nav" id="main-nav">
+    <button class="nav-item active" onclick="switchTab('inicio')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Inicio</button>
+    <button class="nav-item" onclick="switchTab('explorar')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>Explorar</button>
+    <button class="nav-item" onclick="switchTab('hablar')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Hablar</button>
+    <button class="nav-item" onclick="switchTab('recursos')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Recursos</button>
+    <button class="nav-item" onclick="switchTab('perfil')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Mi perfil</button>
+  </nav>
+</div>
+
+<!-- ═══ SOY JOVEN ═══ -->
+<div class="screen" id="s-joven">
+  <div class="inner-header"><button class="back-btn" onclick="goBack()">‹</button><div><h2>Soy joven</h2><p>Información y apoyo para ti</p></div></div>
+  <div class="scrollable pb100">
+    <div class="info-card"><span class="tag">¿Qué es una banda?</span><h3>Entender la situación</h3><p>Si sientes presión para unirte a un grupo, actuar contra tus valores o hacer cosas que te dan miedo, eso no está bien. Tienes derecho a decir NO y a pedir ayuda.</p></div>
+    <div class="info-card"><span class="tag" style="background:#fff7ed;color:#92400e">Señales de alerta</span><h3>¿Reconoces alguna de estas?</h3><p>✦ Te piden guardar secretos<br>✦ Te alejan de amigos y familia<br>✦ Sientes miedo si no cumples<br>✦ Hay violencia o amenazas<br><br>Si identificas alguna señal, no estás solo/a.</p></div>
+    <div class="contact-card">
+      <div class="cc-header"><h3>Pedir ayuda ahora</h3><p>Confidencial y sin juicios</p></div>
+      <div class="cc-body">
+        <div class="contact-item"><div class="ci-icon ci-gc">🛡️</div><div class="ci-text"><strong>Guardia Civil</strong><span>Atención a menores 24h</span></div><a class="call-btn" href="tel:062" onclick="return confirmarLlamada(event)">062</a></div>
+        <div class="contact-item"><div class="ci-icon ci-em">🚨</div><div class="ci-text"><strong>Emergencias</strong><span>Si estás en peligro inmediato</span></div><a class="call-btn red" href="tel:112">112</a></div>
+        <div class="contact-item"><div class="ci-icon ci-anon">💬</div><div class="ci-text"><strong>Chat anónimo</strong><span>Habla con un orientador</span></div><button class="call-btn" onclick="switchTab('hablar')">Chat</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SOY FAMILIA ═══ -->
+<div class="screen" id="s-familia">
+  <div class="inner-header"><button class="back-btn" onclick="goBack()">‹</button><div><h2>Soy familia</h2><p>Cómo proteger a tu hijo/a</p></div></div>
+  <div class="scrollable pb100">
+    <div class="info-card"><span class="tag">Guía para familias</span><h3>Señales en tu hijo/a</h3><p>Cambios bruscos de comportamiento, nuevas amistades desconocidas, horarios irregulares, dinero sin explicación o actitud defensiva pueden ser señales de alerta.</p></div>
+    <div class="info-card"><span class="tag" style="background:#dcfce7;color:#166534">Comunicación</span><h3>Cómo hablar con él/ella</h3><p>✦ Sin juicios ni gritos<br>✦ Escucha activa y sin interrumpir<br>✦ Muéstrale que estás de su lado<br>✦ No lo aísles más<br>✦ Busca ayuda profesional juntos</p></div>
+    <div class="contact-card">
+      <div class="cc-header"><h3>Contactar con la Guardia Civil</h3><p>Equipo de Menores y Familia</p></div>
+      <div class="cc-body">
+        <div class="contact-item"><div class="ci-icon ci-gc">🛡️</div><div class="ci-text"><strong>Guardia Civil</strong><span>Equipo EMUME — Menores</span></div><a class="call-btn" href="tel:062" onclick="return confirmarLlamada(event)">062</a></div>
+        <div class="contact-item"><div class="ci-icon ci-em">🚨</div><div class="ci-text"><strong>Emergencias</strong><span>Peligro inmediato</span></div><a class="call-btn red" href="tel:112">112</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CENTRO ═══ -->
+<div class="screen" id="s-centro">
+  <div class="inner-header"><button class="back-btn" onclick="goBack()">‹</button><div><h2>Centro / Servicio Social</h2><p>Protocolo de actuación</p></div></div>
+  <div class="scrollable pb100">
+    <div class="info-card"><span class="tag">Protocolo</span><h3>Pasos a seguir</h3><p>1. Observar y documentar señales<br>2. Hablar en privado con el menor<br>3. Notificar al equipo directivo<br>4. Contactar con Guardia Civil o SS.SS.<br>5. Acompañar al menor durante el proceso</p></div>
+    <div class="info-card"><span class="tag" style="background:var(--purple-light);color:var(--purple)">Formación</span><h3>Recursos para profesionales</h3><p>Accede a las guías de detección temprana, protocolos de derivación y materiales de formación para equipos educativos y de servicios sociales.</p></div>
+    <div class="contact-card">
+      <div class="cc-header"><h3>Coordinación con Guardia Civil</h3><p>Canal directo para profesionales</p></div>
+      <div class="cc-body">
+        <div class="contact-item"><div class="ci-icon ci-gc">🛡️</div><div class="ci-text"><strong>Guardia Civil</strong><span>Unidad de Menores — 062</span></div><a class="call-btn" href="tel:062" onclick="return confirmarLlamada(event)">062</a></div>
+        <div class="contact-item"><div class="ci-icon" style="background:var(--purple-light)">📋</div><div class="ci-text"><strong>Servicios Sociales</strong><span>Atención a menores</span></div><a class="call-btn" href="tel:900700999">900…</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ NEEDS ═══ -->
+<div class="screen" id="s-entender">
+  <div class="inner-header"><button class="back-btn" onclick="goBack()">‹</button><div><h2>Entender qué me pasa</h2></div></div>
+  <div class="scrollable pb100">
+    <div class="info-card"><h3>No es culpa tuya</h3><p>A veces las personas nos meten en situaciones difíciles sin que nos demos cuenta. Reconocer que algo no está bien ya es muy valiente.</p></div>
+    <div class="info-card"><h3>Habla con alguien de confianza</h3><p>Un familiar, un profesor, un amigo mayor. No tienes que afrontarlo solo/a. Si no sabes a quién acudir, usa nuestro chat anónimo.</p></div>
+    <div class="info-card" style="cursor:pointer;background:linear-gradient(135deg,var(--navy),var(--blue))" onclick="switchTab('hablar')">
+      <div style="display:flex;align-items:center;gap:10px"><span style="font-size:28px">💬</span><div><h3 style="margin:0;color:#fff">Abrir chat con orientador</h3><p style="margin:0;font-size:12px;color:rgba(255,255,255,.8)">Anónimo y seguro</p></div><span style="margin-left:auto;color:#fff;font-size:20px">›</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="s-amigo">
+  <div class="inner-header"><button class="back-btn" onclick="goBack()">‹</button><div><h2>Me preocupa un amigo/a</h2></div></div>
+  <div class="scrollable pb100">
+    <div class="info-card"><h3>¿Qué señales ves?</h3><p>Si tu amigo/a se ausenta, tiene miedo, recibe órdenes de otros o muestra cambios bruscos, puede estar en situación de riesgo.</p></div>
+    <div class="info-card"><h3>Cómo ayudar</h3><p>✦ Escúchale sin juzgar<br>✦ No le presiones<br>✦ Infórmale de que puede pedir ayuda<br>✦ Si está en peligro, llama al 062 o 112</p></div>
+    <div class="contact-card"><div class="cc-header"><h3>Contactos de emergencia</h3></div><div class="cc-body"><div class="contact-item"><div class="ci-icon ci-gc">🛡️</div><div class="ci-text"><strong>Guardia Civil</strong><span>Puedes informar de forma anónima</span></div><a class="call-btn" href="tel:062" onclick="return confirmarLlamada(event)">062</a></div></div></div>
+  </div>
+</div>
+
+<div class="screen" id="s-casa">
+  <div class="inner-header"><button class="back-btn" onclick="goBack()">‹</button><div><h2>Cómo actuar en casa</h2></div></div>
+  <div class="scrollable pb100">
+    <div class="info-card"><h3>Ambiente familiar seguro</h3><p>El hogar debe ser un lugar de confianza. Si hay tensión o amenazas relacionadas con grupos externos, actúa con calma y sin confrontaciones directas.</p></div>
+    <div class="info-card"><h3>Pasos para familias</h3><p>✦ No actúes solo frente al grupo<br>✦ No enfrentes directamente a los líderes<br>✦ Contacta con la Guardia Civil<br>✦ Busca apoyo psicológico para el menor<br>✦ Mantén la comunicación abierta</p></div>
+  </div>
+</div>
+
+<div class="screen" id="s-profesional">
+  <div class="inner-header"><button class="back-btn" onclick="goBack()">‹</button><div><h2>Para profesionales</h2></div></div>
+  <div class="scrollable pb100">
+    <div class="info-card"><h3>Detección temprana</h3><p>Los profesionales en contacto con jóvenes son clave para detectar situaciones de riesgo antes de que escalen. La formación y la coordinación son fundamentales.</p></div>
+    <div class="info-card"><h3>Recursos disponibles</h3><p>✦ Formación en identificación de señales<br>✦ Protocolos de derivación<br>✦ Coordinación con Guardia Civil y SS.SS.<br>✦ Seguimiento de casos</p></div>
+    <div class="contact-card"><div class="cc-header"><h3>Línea directa profesional</h3></div><div class="cc-body"><div class="contact-item"><div class="ci-icon ci-gc">🛡️</div><div class="ci-text"><strong>Guardia Civil — Menores</strong></div><a class="call-btn" href="tel:062" onclick="return confirmarLlamada(event)">062</a></div></div></div>
+  </div>
+</div>
+
+<!-- ═══ EXPLORAR ═══ -->
+<div class="screen" id="s-explorar">
+  <div class="explorar-header"><h2>Explorar</h2><p>Temas y recursos formativos</p></div>
+  <div class="scrollable"><div class="explorar-content">
+    <div class="explora-card" onclick="goTo('s-ex-bandas')"><div class="ec-img bg-blue">🛡️</div><div class="ec-body"><h4>¿Qué son las bandas juveniles?</h4><p>Señales de alerta, factores de riesgo y cómo salir si crees estar en una.</p></div></div>
+    <div class="explora-card" onclick="goTo('s-ex-presion')"><div class="ec-img bg-green">💪</div><div class="ec-body"><h4>Autoestima y presión de grupo</h4><p>Herramientas para fortalecer tu identidad y resistir la presión.</p></div></div>
+    <div class="explora-card" onclick="goTo('s-ex-salud')"><div class="ec-img bg-purple">🧠</div><div class="ec-body"><h4>Salud mental y bienestar</h4><p>Reconoce cuándo necesitas apoyo y cómo pedirlo sin miedo.</p></div></div>
+    <div class="explora-card" onclick="goTo('s-ex-familias')"><div class="ec-img bg-orange">📚</div><div class="ec-body"><h4>Guías para familias</h4><p>Cómo hablar con tu hijo/a sobre estos temas de forma efectiva.</p></div></div>
+    <div class="explora-card" onclick="goTo('s-ex-derechos')"><div class="ec-img bg-red">⚖️</div><div class="ec-body"><h4>Tus derechos como menor</h4><p>Lo que la ley garantiza para tu protección y bienestar.</p></div></div>
+    <div class="explora-card" onclick="goTo('s-ex-redes')"><div class="ec-img bg-yellow">📱</div><div class="ec-body"><h4>Seguridad en redes sociales</h4><p>Cómo protegerte del acoso online y la captación digital.</p></div></div>
+  </div></div>
+</div>
+
+<!-- ─── Bandas ─── -->
+<div class="screen" id="s-ex-bandas">
+  <div class="inner-header"><button class="back-btn" onclick="goBack()">‹</button><div><h2>Bandas juveniles</h2></div></div>
+  <div class="scrollable"><div class="explora-inner">
+    <div style="background:linear-gradient(135deg,#dbeafe,#bfdbfe);border-radius:14px;padding:18px;text-align:center;font-size:40px">🛡️</div>
+    <h3>¿Qué es una banda juvenil?</h3>
+    <p>Una banda juvenil es un grupo organizado que usa la violencia, la intimidación o la delincuencia como forma de actuar. Se diferencian de los grupos de amigos normales por la presencia de jerarquía, lealtad forzada y actividades ilegales.</p>
+    <div class="warn-box"><p>⚠️ Muchos jóvenes entran sin darse cuenta, atraídos por la sensación de pertenencia, protección o estatus.</p></div>
+    <h3>Señales de que podrías estar en riesgo</h3>
+    <ul><li>Te piden guardar secretos sobre actividades del grupo</li><li>Sientes que no puedes salir aunque quieras</li><li>Has participado o presenciado actos violentos</li><li>El grupo te aleja de familia y amigos de antes</li><li>Hay dinero o bienes cuyo origen no está claro</li></ul>
+    <div class="highlight-box"><p>✅ Reconocer la situación es el primer paso. No es demasiado tarde para pedir ayuda.</p></div>
+    <h3>¿Cómo salir?</h3>
+    <p>Salir de una banda puede ser peligroso sin apoyo. La Guardia Civil cuenta con programas especializados de protección y reinserción. No tienes que hacerlo solo/a.</p>
+    <div class="contact-card" style="margin:14px 0"><div class="cc-header"><h3>Pedir ayuda ahora</h3></div><div class="cc-body"><div class="contact-item"><div class="ci-icon ci-gc">🛡️</div><div class="ci-text"><strong>Guardia Civil</strong><span>Confidencial · 24 horas</span></div><a class="call-btn" href="tel:062" onclick="return confirmarLlamada(event)">062</a></div></div></div>
+  </div></div>
+</div>
+
+<!-- ─── Presión ─── -->
+<div class="screen" id="s-ex-presion">
+  <div class="inner-header"><button class="back-btn" onclick="goBack()">‹</button><div><h2>Autoestima y presión</h2></div></div>
+  <div class="scrollable"><div class="explora-inner">
+    <div style="background:linear-gradient(135deg,#dcfce7,#bbf7d0);border-radius:14px;padding:18px;text-align:center;font-size:40px">💪</div>
+    <h3>¿Qué es la presión de grupo?</h3>
+    <p>La presión de grupo ocurre cuando sientes que debes actuar de cierta manera para ser aceptado/a. Es normal sentirla, pero aprender a identificarla te da el poder de decidir libremente.</p>
+    <h3>Técnicas para decir NO</h3>
+    <ul><li><strong>El disco rayado:</strong> repite tu negativa con calma sin dar explicaciones largas.</li><li><strong>El banco de niebla:</strong> da la razón en lo irrelevante pero mantén tu posición.</li><li><strong>Aplazar:</strong> "Lo pienso y te digo" te da tiempo sin presión.</li></ul>
+    <div class="highlight-box"><p>💚 Quien te presiona para hacer algo que no quieres no es un verdadero amigo/a.</p></div>
+    <h3>Cómo fortalecer tu autoestima</h3>
+    <p>✦ Identifica tus valores: ¿qué es importante para ti?<br>✦ Rodéate de personas que te respeten<br>✦ Celebra tus logros, por pequeños que sean<br>✦ Busca actividades que te hagan sentir bien contigo mismo/a</p>
+    <div class="warn-box"><p>🔎 Si tu autoestima está muy baja, habla con un profesional. No es debilidad, es inteligencia.</p></div>
+  </div></div>
+</div>
+
+<!-- ─── Salud ─── -->
+<div class="screen" id="s-ex-salud">
+  <div class="inner-header"><button class="back-btn" onclick="goBack()">‹</button><div><h2>Salud mental</h2></div></div>
+  <div class="scrollable"><div class="explora-inner">
+    <div style="background:linear-gradient(135deg,#ede9fe,#ddd6fe);border-radius:14px;padding:18px;text-align:center;font-size:40px">🧠</div>
+    <h3>Tu salud mental importa</h3>
+    <p>La salud mental es tan importante como la física. Sentir ansiedad, tristeza o confusión en situaciones difíciles es normal, pero cuando persiste necesitas apoyo.</p>
+    <h3>Señales de que necesitas ayuda</h3>
+    <ul><li>Tristeza persistente más de dos semanas</li><li>Ansiedad o miedo que te impide hacer cosas normales</li><li>Cambios bruscos de humor o comportamiento</li><li>Aislamiento de personas que te importan</li><li>Pensamientos negativos recurrentes sobre ti mismo/a</li></ul>
+    <div class="highlight-box"><p>💜 Pedir ayuda psicológica no significa estar "loco/a". Significa que te cuidas.</p></div>
+    <h3>¿A quién acudir?</h3>
+    <p>Puedes hablar con tu médico de cabecera, el orientador de tu centro educativo, el Teléfono del Menor (116 111) o usar el chat anónimo de esta app.</p>
+  </div></div>
+</div>
+
+<!-- ─── Familias ─── -->
+<div class="screen" id="s-ex-familias">
+  <div class="inner-header"><button class="back-btn" onclick="goBack()">‹</button><div><h2>Guía para familias</h2></div></div>
+  <div class="scrollable"><div class="explora-inner">
+    <div style="background:linear-gradient(135deg,#ffedd5,#fed7aa);border-radius:14px;padding:18px;text-align:center;font-size:40px">📚</div>
+    <h3>El papel de la familia es clave</h3>
+    <p>La familia es el principal factor de protección ante la incorporación de un joven a una banda. Un vínculo afectivo sólido y comunicación abierta reducen significativamente el riesgo.</p>
+    <h3>Cómo crear un entorno seguro</h3>
+    <ul><li>Establece horarios y normas claras pero razonables</li><li>Muestra interés genuino por sus amistades y actividades</li><li>Valida sus emociones sin minimizarlas</li><li>Evita reacciones exageradas cuando cuente problemas</li><li>Mantén canales de comunicación abiertos siempre</li></ul>
+    <div class="warn-box"><p>⚠️ Si sospechas que tu hijo/a está en una banda, no confrontes al grupo directamente. Contacta con la Guardia Civil.</p></div>
+    <h3>Señales de alerta en el hogar</h3>
+    <p>Dinero o ropa de origen desconocido, tatuajes o símbolos nuevos, cambio repentino de amigos, llegadas muy tarde, actitud hostil o secretismo extremo.</p>
+  </div></div>
+</div>
+
+<!-- ─── Derechos ─── -->
+<div class="screen" id="s-ex-derechos">
+  <div class="inner-header"><button class="back-btn" onclick="goBack()">‹</button><div><h2>Tus derechos</h2></div></div>
+  <div class="scrollable"><div class="explora-inner">
+    <div style="background:linear-gradient(135deg,#fee2e2,#fecaca);border-radius:14px;padding:18px;text-align:center;font-size:40px">⚖️</div>
+    <h3>Como menor, tienes derechos</h3>
+    <p>La Convención de los Derechos del Niño de la ONU y la legislación española te garantizan derechos que nadie puede quitarte:</p>
+    <ul><li><strong>Derecho a la protección:</strong> el Estado debe protegerte de toda forma de violencia o explotación.</li><li><strong>Derecho a ser escuchado/a:</strong> tu opinión importa en las decisiones que te afectan.</li><li><strong>Derecho a la intimidad:</strong> nadie puede obligarte a revelar información privada.</li><li><strong>Derecho a la educación:</strong> nadie puede impedirte estudiar.</li><li><strong>Derecho a pedir ayuda:</strong> puedes contactar con servicios de protección sin permiso de tus padres si estás en peligro.</li></ul>
+    <div class="highlight-box"><p>✅ Si alguien viola tus derechos, puedes denunciarlo llamando al 062 o al 116 111.</p></div>
+  </div></div>
+</div>
+
+<!-- ─── Redes ─── -->
+<div class="screen" id="s-ex-redes">
+  <div class="inner-header"><button class="back-btn" onclick="goBack()">‹</button><div><h2>Seguridad en redes</h2></div></div>
+  <div class="scrollable"><div class="explora-inner">
+    <div style="background:linear-gradient(135deg,#fef9c3,#fef08a);border-radius:14px;padding:18px;text-align:center;font-size:40px">📱</div>
+    <h3>La captación también ocurre online</h3>
+    <p>Las bandas utilizan cada vez más las redes sociales para captar jóvenes mediante retos virales, promesas de dinero o popularidad.</p>
+    <h3>Señales de captación digital</h3>
+    <ul><li>Alguien que no conoces en persona te pide favores</li><li>Te proponen ganar dinero fácil haciendo "pequeños encargos"</li><li>Te piden guardar secreto sobre vuestras conversaciones</li><li>Te envían imágenes violentas para "probar" tu lealtad</li></ul>
+    <div class="warn-box"><p>⚠️ Si alguien te hace sentir incómodo/a online, bloquéalo y cuéntaselo a un adulto de confianza o a la Guardia Civil.</p></div>
+    <h3>Cómo protegerte</h3>
+    <p>✦ Mantén tu perfil privado<br>✦ No aceptes solicitudes de desconocidos<br>✦ No compartas tu ubicación<br>✦ Guarda capturas si recibes amenazas<br>✦ Denuncia en el 062 o en el portal de la Guardia Civil</p>
+  </div></div>
+</div>
+
+<!-- ═══ HABLAR ═══ -->
+<div class="screen" id="s-hablar">
+  <div class="inner-header">
+    <div><h2>💬 Chat de apoyo</h2><p>Anónimo · Confidencial · Sin juicios</p></div>
+    <button class="call-btn" style="margin-left:auto;font-size:11px;padding:7px 12px" onclick="goTo('s-test')">📋 Test</button>
+  </div>
+  <div class="chat-container">
+    <div class="chat-messages" id="chatMessages">
+      <div class="msg bot"><div class="bubble">¡Hola! Soy tu orientador de Red Joven Segura 👋<br><br>Puedes contarme lo que necesitas. Todo es completamente confidencial. ¿Cómo estás hoy?</div><div class="time">Ahora</div></div>
+    </div>
+    <div class="quick-replies">
+      <button class="qr-chip" onclick="sendQuick('No sé si estoy en una situación de riesgo')">¿Estoy en riesgo?</button>
+      <button class="qr-chip" onclick="sendQuick('Me preocupa un amigo o amiga')">Me preocupa un amigo</button>
+      <button class="qr-chip" onclick="sendQuick('Quiero hacer el test de autoevaluación')">Hacer el test</button>
+      <button class="qr-chip" onclick="sendQuick('Necesito ayuda urgente')">Es urgente</button>
+    </div>
+    <div class="chat-input-row">
+      <textarea class="chat-input" id="chatInput" placeholder="Escribe tu mensaje..." rows="1" onkeydown="handleKey(event)"></textarea>
+      <button class="send-btn" onclick="sendMessage()"><svg viewBox="0 0 24 24"><path d="M2 21L23 12 2 3v7l15 2-15 2v7z"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TEST ═══ -->
+<div class="screen" id="s-test">
+  <div class="inner-header"><button class="back-btn" onclick="goBack()">‹</button><div><h2>Test de autoevaluación</h2><p>Anónimo · 8 preguntas · 3 min</p></div></div>
+  <div class="scrollable pb100">
+    <div class="info-card" style="margin-bottom:0"><p style="font-size:13px;color:var(--muted)">Este test te ayuda a identificar si podrías estar en una situación de riesgo. No es un diagnóstico clínico. Responde con honestidad, nadie verá tus respuestas.</p></div>
+    <div class="test-container" id="testContainer">
+      <div class="test-header"><h3 id="testTitle">Pregunta 1 de 8</h3><p id="testSubtitle">Presión y pertenencia</p></div>
+      <div class="test-body">
+        <div class="test-progress"><div class="test-progress-fill" id="testProgress" style="width:12.5%"></div></div>
+        <div class="test-question" id="testQuestion"></div>
+        <div class="test-options" id="testOptions"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ RECURSOS ═══ -->
+<div class="screen" id="s-recursos">
+  <div class="explorar-header"><h2>Recursos de ayuda</h2><p>Contactos de emergencia</p></div>
+  <div class="scrollable"><div class="resource-list">
+    <div class="resource-item"><div class="ri-icon" style="background:#fef3c7">🛡️</div><div class="ri-text"><h4>Guardia Civil</h4><p>Atención a menores, familias y profesionales. Denuncias y emergencias.</p><a class="phone" href="tel:062" onclick="return confirmarLlamada(event)">062</a></div></div>
+    <div class="resource-item"><div class="ri-icon" style="background:#fee2e2">🚨</div><div class="ri-text"><h4>Emergencias</h4><p>Si hay peligro inmediato para ti o para otra persona.</p><a class="phone" href="tel:112">112</a></div></div>
+    <div class="resource-item"><div class="ri-icon" style="background:#dcfce7">🧒</div><div class="ri-text"><h4>Teléfono del Menor</h4><p>Servicio gratuito y confidencial para menores en dificultad. 24 horas.</p><a class="phone" href="tel:116111">116 111</a></div></div>
+    <div class="resource-item"><div class="ri-icon" style="background:var(--purple-light)">🏛️</div><div class="ri-text"><h4>Servicios Sociales</h4><p>Apoyo social y seguimiento de casos de menores en riesgo.</p><a class="phone" href="tel:900700999">900 700 999</a></div></div>
+    <div class="resource-item"><div class="ri-icon" style="background:#e0f2fe">💬</div><div class="ri-text"><h4>Chat anónimo</h4><p>Habla con un orientador de forma segura y sin revelar tu identidad.</p><button class="call-btn" style="margin-top:8px" onclick="switchTab('hablar')">Abrir chat</button></div></div>
+    <div class="resource-item"><div class="ri-icon" style="background:var(--green-light)">📋</div><div class="ri-text"><h4>Test de autoevaluación</h4><p>Comprueba si podrías estar en una situación de riesgo.</p><button class="call-btn" style="margin-top:8px;background:var(--purple)" onclick="goTo('s-test')">Hacer test</button></div></div>
+  </div></div>
+</div>
+
+<!-- ═══ PERFIL ═══ -->
+<div class="screen" id="s-perfil">
+  <div class="explorar-header"><h2>Mi perfil</h2><p>Ajustes y código QR</p></div>
+  <div class="scrollable"><div class="perfil-content">
+    <div class="perfil-avatar">😊</div>
+    <p class="perfil-name">Joven Anónimo</p>
+    <p class="perfil-sub">Acceso confidencial · Red Joven Segura</p>
+    <div class="info-card">
+      <h3 style="text-align:center;margin-bottom:16px">📲 Código QR de acceso</h3>
+      <div class="qr-box">
+        <strong style="font-size:15px;color:var(--navy)">Red Joven Segura</strong>
+        <div id="qrcode"></div>
+        <p style="font-size:13px;color:var(--muted);text-align:center;max-width:220px;line-height:1.5">Escanea para abrir la app directamente en cualquier dispositivo.</p>
+        <div class="qr-url" id="qrUrl">Cargando enlace…</div>
+        <button class="copy-btn" id="copyBtn" onclick="copyLink()">📋 Copiar enlace</button>
+      </div>
+      <div class="qr-info-box"><p>🛡️ Comparte este QR en centros educativos, consultas y espacios juveniles para que más jóvenes accedan a la ayuda.</p></div>
+    </div>
+    <div class="perfil-section">
+      <h3>Acceso rápido</h3>
+      <div class="perfil-item" onclick="confirmarLlamada(null)"><span style="font-size:20px;width:36px;text-align:center">🛡️</span><span style="font-size:14px;font-weight:700;color:var(--navy);flex:1">Llamar Guardia Civil — 062</span><span class="pi-arr">›</span></div>
+      <div class="perfil-item" onclick="goTo('s-test')"><span style="font-size:20px;width:36px;text-align:center">📋</span><span style="font-size:14px;font-weight:700;color:var(--navy);flex:1">Hacer test de autoevaluación</span><span class="pi-arr">›</span></div>
+      <div class="perfil-item" onclick="switchTab('hablar')"><span style="font-size:20px;width:36px;text-align:center">💬</span><span style="font-size:14px;font-weight:700;color:var(--navy);flex:1">Abrir chat anónimo</span><span class="pi-arr">›</span></div>
+    </div>
+  </div></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── NAV ──
+const navHistory=[];
+function goTo(id){const c=document.querySelector('.screen.active');if(c)navHistory.push(c.id);_show(id);}
+function goBack(){const p=navHistory.pop();_show(p||'s-inicio');}
+function _show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));const el=document.getElementById(id);if(el){el.classList.add('active');const sc=el.querySelector('.scrollable');if(sc)sc.scrollTop=0;}}
+const TAB={'inicio':'s-inicio','explorar':'s-explorar','hablar':'s-hablar','recursos':'s-recursos','perfil':'s-perfil'};
+function switchTab(t){navHistory.length=0;_show(TAB[t]||'s-inicio');document.querySelectorAll('#main-nav .nav-item').forEach((b,i)=>{const ts=['inicio','explorar','hablar','recursos','perfil'];b.classList.toggle('active',ts[i]===t);});}
+
+// ── QR ──
+// ⚙️ Cambia esta URL por la dirección real donde subas la app:
+const APP_URL='https://GonCandela.github.io/redsegurajoven';
+window.addEventListener('load',function(){
+  const url=(window.location.protocol==='https:'&&!window.location.href.includes('example'))
+    ?window.location.href:APP_URL;
+  document.getElementById('qrUrl').textContent=url;
+  new QRCode(document.getElementById('qrcode'),{text:url,width:200,height:200,colorDark:'#1a2e5a',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+  initTest();
+});
+function copyLink(){const url=document.getElementById('qrUrl').textContent;if(navigator.clipboard){navigator.clipboard.writeText(url).then(()=>{const b=document.getElementById('copyBtn');b.textContent='✅ ¡Enlace copiado!';b.classList.add('copied');setTimeout(()=>{b.textContent='📋 Copiar enlace';b.classList.remove('copied');},2500);});}else{showToast('Copia el enlace de la barra de direcciones');}}
+
+// ── LLAMADA ──
+function confirmarLlamada(e){if(e)e.preventDefault();if(confirm('¿Quieres llamar a la Guardia Civil?\n\n📞  062\n\nGratuita · Confidencial · 24h')){window.location.href='tel:062';}return false;}
+
+// ── TOAST ──
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+// ── CHAT ──
+const BOT=[
+  {keys:['riesgo','situación','peligro','banda','grupo'],r:'Entiendo que no sabes si tu situación es de riesgo. Eso es normal y lo más importante es que lo estés pensando. ¿Hay alguien que te presiona para hacer cosas que no quieres? 🤔'},
+  {keys:['amigo','amiga','compañero'],r:'Es muy valiente preocuparte por alguien. ¿Qué señales has notado en tu amigo/a? Cuéntame para orientarte mejor. 💙'},
+  {keys:['test','autoevaluación','evaluar'],r:'¡Buena idea! Puedes acceder al test pulsando el botón "📋 Test" que hay arriba, o desde la sección Recursos. ¿Te lo explico?'},
+  {keys:['urgente','emergencia','peligro ahora'],r:'Si estás en peligro inmediato, llama al 112 ahora mismo. La Guardia Civil (062) también está disponible 24h de forma confidencial. ¿Estás en un lugar seguro? 🚨'},
+  {keys:['miedo','asustado','asustada'],r:'Es completamente comprensible sentir miedo. Lo importante es que has dado el paso de hablar. ¿Estás en un lugar seguro ahora mismo? 💙'},
+  {keys:['familia','padres','madre','padre'],r:'La familia puede ser un gran apoyo, aunque a veces no sepan cómo ayudar. ¿Crees que podrías hablar con alguien de tu familia sobre esto?'},
+  {keys:['solo','sola','nadie'],r:'No estás solo/a, aunque lo parezca. Hay personas que pueden ayudarte sin juzgarte. También puedes llamar al 062 o al Teléfono del Menor (116 111). 🤝'},
+  {keys:['gracias'],r:'Para eso estamos 😊 ¿Hay algo más en lo que pueda ayudarte?'},
+];
+function getReply(m){const ml=m.toLowerCase();for(const {keys,r} of BOT)if(keys.some(k=>ml.includes(k)))return r;return 'Gracias por compartirlo. No estás solo/a. ¿Quieres que te explique cómo pedir ayuda de forma segura, o prefieres hacer el test de autoevaluación? 💙';}
+function addMsg(txt,isUser){const msgs=document.getElementById('chatMessages');const d=document.createElement('div');d.className='msg '+(isUser?'user':'bot');const now=new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});d.innerHTML=`<div class="bubble">${txt.replace(/\n/g,'<br>')}</div><div class="time">${now}</div>`;msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;}
+function sendMessage(){const i=document.getElementById('chatInput');const t=i.value.trim();if(!t)return;addMsg(t,true);i.value='';setTimeout(()=>addMsg(getReply(t),false),800);}
+function sendQuick(t){addMsg(t,true);setTimeout(()=>addMsg(getReply(t),false),800);}
+function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}
+
+// ── TEST ──
+const TQ=[
+  {q:'¿Sientes que hay personas que te presionan para hacer cosas que no quieres?',cat:'Presión y pertenencia',opts:['Nunca','A veces','Con frecuencia','Siempre']},
+  {q:'¿Formas parte de un grupo donde te piden guardar secretos sobre sus actividades?',cat:'Secretismo',opts:['No, nunca','Alguna vez','Sí, a menudo','Sí, constantemente']},
+  {q:'¿Has sentido miedo de lo que podría pasarte si no haces lo que el grupo dice?',cat:'Miedo y coerción',opts:['Nunca','Alguna vez','Con frecuencia','Siempre']},
+  {q:'¿Tu entorno cercano (familia, amigos de antes) ha cambiado por culpa de este grupo?',cat:'Aislamiento social',opts:['No ha cambiado nada','Un poco','Bastante','Completamente']},
+  {q:'¿Has presenciado o participado en situaciones de violencia o actos ilegales?',cat:'Exposición a violencia',opts:['Nunca','Una vez','Varias veces','Con regularidad']},
+  {q:'¿Hay dinero, objetos o ropa en tu vida cuyo origen no sabes explicar bien?',cat:'Actividad sospechosa',opts:['No, nunca','Alguna vez','Con frecuencia','Sí, habitualmente']},
+  {q:'¿Sientes que no podrías abandonar el grupo aunque quisieras?',cat:'Libertad de salida',opts:['Podría salir sin problema','Sería difícil pero posible','Sería muy difícil','Siento que no puedo salir']},
+  {q:'¿Has pensado en pedir ayuda sobre tu situación?',cat:'Conciencia de la situación',opts:['No necesito ayuda','Lo he pensado pero no sé cómo','Lo he intentado sin éxito','Sí, necesito ayuda urgente']},
+];
+const W=[0,1,2,3];
+let tIdx=0,tScore=0;
+function initTest(){tIdx=0;tScore=0;renderQ();}
+function renderQ(){
+  if(tIdx>=TQ.length){showResult();return;}
+  const q=TQ[tIdx];
+  document.getElementById('testTitle').textContent=`Pregunta ${tIdx+1} de ${TQ.length}`;
+  document.getElementById('testSubtitle').textContent=q.cat;
+  document.getElementById('testQuestion').textContent=q.q;
+  document.getElementById('testProgress').style.width=`${((tIdx+1)/TQ.length)*100}%`;
+  const o=document.getElementById('testOptions');o.innerHTML='';
+  q.opts.forEach((opt,i)=>{const b=document.createElement('button');b.className='test-opt';b.textContent=opt;b.onclick=()=>{tScore+=W[i];tIdx++;renderQ();};o.appendChild(b);});
+}
+function showResult(){
+  const pct=Math.round((tScore/(TQ.length*3))*100);
+  let badge,bc,title,msg,cta='';
+  if(pct<=25){badge='✅ Sin señales de riesgo';bc='badge-ok';title='Parece que estás bien';msg='No hemos detectado señales significativas de riesgo. Aun así, si algo te preocupa, puedes hablar con nosotros en cualquier momento.';}
+  else if(pct<=55){badge='⚠️ Algunas señales de alerta';bc='badge-warn';title='Hay cosas a tener en cuenta';msg='Hemos detectado algunas señales que merecen atención. Sería bueno hablar con alguien de confianza o con un orientador.';cta=`<button class="call-btn" style="margin-top:10px;width:100%;padding:12px" onclick="switchTab('hablar')">💬 Hablar con orientador</button>`;}
+  else{badge='🔴 Señales de riesgo importantes';bc='badge-alert';title='Es importante que pidas ayuda';msg='Las respuestas indican señales de riesgo significativas. No tienes que afrontarlo solo/a. La Guardia Civil y el Teléfono del Menor están disponibles ahora mismo.';cta=`<a class="call-btn red" href="tel:062" onclick="return confirmarLlamada(event)" style="display:block;text-align:center;margin-top:10px;padding:12px">🛡️ Llamar Guardia Civil — 062</a><a class="call-btn" href="tel:116111" style="display:block;text-align:center;margin-top:8px;padding:12px;background:var(--teal)">📞 Teléfono del Menor — 116 111</a>`;}
+  document.getElementById('testContainer').innerHTML=`<div class="test-header"><h3>Resultado del test</h3><p>Evaluación completada</p></div><div class="test-result"><div class="score">${pct}<span style="font-size:24px">%</span></div><span class="result-badge ${bc}">${badge}</span><h4>${title}</h4><p>${msg}</p>${cta}<button class="restart-btn" onclick="initTest()">🔄 Repetir test</button></div>`;
+}
+</script>
+</body>
+</html>
